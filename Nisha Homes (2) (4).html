@@ -1,0 +1,159 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Nisha Homes</title>
+    <style>
+        body {
+            font-family: 'Playfair Display', serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80') no-repeat center center fixed;
+            background-size: cover;
+            background-color: rgba(255, 255, 255, 0.5); /* Semi-transparent light base to allow background visibility */
+            animation: bounceBackground 5s infinite;
+        }
+        @keyframes bounceBackground {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.7); /* Light background with transparency */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            color: #1a1a1a; /* Dark, vibrant text for visibility */
+        }
+        h1 {
+            font-size: 2.5em;
+            color: #ff9900;
+            font-family: 'Great Vibes', cursive;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+            animation: bounceText 2s infinite;
+        }
+        @keyframes bounceText {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        h2 {
+            font-size: 1.8em;
+            color: #d35400;
+            font-family: 'Lobster', cursive;
+        }
+        p {
+            font-size: 1.2em;
+            color: #1a1a1a; /* Dark, vibrant text */
+            line-height: 1.6;
+            font-family: 'Roboto', sans-serif;
+        }
+        .highlight {
+            color: #f4a81a;
+            font-weight: bold;
+        }
+        .contact {
+            font-size: 1.3em;
+            color: #1a1a1a; /* Dark, vibrant text */
+            font-family: 'Cinzel', serif;
+        }
+        a {
+            color: #e65100;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .button {
+            background-color: #ff9900;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            cursor: pointer;
+            margin-top: 20px;
+            font-family: 'Montserrat', sans-serif;
+            animation: bounceButton 2s infinite;
+            text-decoration: none; /* Ensure no underline */
+            display: inline-block; /* Ensure proper rendering on mobile */
+        }
+        @keyframes bounceButton {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        .button:hover {
+            background-color: #d35400;
+        }
+        .clickable-image {
+            cursor: pointer;
+            margin-top: 20px;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Great+Vibes&family=Lobster&family=Roboto&family=Cinzel&family=Montserrat&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="content">
+        <h1>🌟 Welcome to Nisha Homes, Where Dreams Find Their Address! 🌟</h1>
+        <h2>A Warm Welcome Awaits!</h2>
+        <p>Join <span class="highlight">Nisha Homes</span>, your trusted South Delhi real estate partner, to make your dream home a reality with expert care.</p>
+        <p>Connect with us:</p>
+        <p>
+            <a href="https://nishahomes.com/" target="_blank">🌐 Nisha Homes</a>: Discover more.  
+            <a href="https://www.youtube.com/@nisha_homes" target="_blank">🎥 YouTube</a>: Stunning listings & advice.  
+            <a href="https://tinyurl.com/Nishhomes" target="_blank">📘 Facebook</a>: Latest trends.  
+            <a href="http://tinyurl.com/Nishahomes" target="_blank">📸 Instagram</a>: Dream home tours.  
+        </p>
+        <p class="contact">Contact <span class="highlight">7303515710</span> or chat to share your needs for tailored property options!</p>
+        <a href="https://wa.me/7303515710" class="button">Chat Now</a>
+        <a href="https://nishahomes.com/" target="_blank">
+            <img src="https://via.placeholder.com/300x200?text=Nisha+Homes" alt="Nisha Homes" class="clickable-image" style="max-width: 100%;">
+        </a>
+    </div>
+</body>
+</html>
